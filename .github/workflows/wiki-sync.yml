@@ -1,26 +1,50 @@
-name: Sync All Files to Wiki
+name: Sync Entire Repo to Wiki
 
 on:
   push:
     branches:
-      - main  # 只在 main 分支发生 push 时触发
+      - main  # 监听 main 分支的推送
+    paths-ignore:  # 可选：忽略某些文件/目录的变更（避免循环触发）
+      - '.gitignore'
+      - '.github/**'
 
 jobs:
-  sync-wiki:
+  sync:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3  # 检出当前仓库的代码
+      # 1. 检出主仓库代码（包括所有文件）
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 拉取完整历史记录（可选）
 
-    - name: Clone Wiki
-      run: |
-        git clone https://github.com/yoliax/llm_note.wiki.git wiki  # 克隆 Wiki 仓库
+      # 2. 克隆 Wiki 仓库
+      - name: Clone Wiki
+        run: |
+          git clone https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.wiki.git wiki
 
-    - name: Copy all files to Wiki root, excluding unnecessary files
-      run: |
-        cp -R ./ wiki/  # 将 main 分支文件同步到 Wiki 目录
-        cd wiki
-        git add .  # 添加所有文件
-        git commit -m "Sync all files to Wiki root" || echo "No changes to commit"  # 提交更改
-        git push  # 推送到远程 Wiki 仓库
+      # 3. 同步主仓库所有文件到 Wiki（排除.git等目录）
+      - name: Copy All Files
+        run: |
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.gitignore' \
+            --exclude='wiki/' \
+            ./ wiki/
+          # 可选：重命名 README.md 为 Wiki 首页
+          # mv wiki/README.md wiki/Home.md 2>/dev/null || true
+
+      # 4. 提交并推送更改
+      - name: Push to Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd wiki
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add .
+          if ! git diff --quiet && git diff --staged --quiet; then
+            git commit -m "Auto-sync entire repo: ${{ github.sha }}"
+            git push origin HEAD:main
+          fi
