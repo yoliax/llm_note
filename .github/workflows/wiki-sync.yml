@@ -1,4 +1,4 @@
-name: Sync Entire Repo to Wiki
+name: Sync to Wiki
 
 on:
   push:
