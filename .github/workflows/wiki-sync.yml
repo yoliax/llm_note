@@ -19,7 +19,7 @@ jobs:
 
     - name: Copy all files to Wiki root, excluding unnecessary files
       run: |
-        rsync -av --exclude='.git/' --exclude='.github/' ./ wiki/  # 将 main 分支文件同步到 Wiki 目录
+        cp -R ./ wiki/  # 将 main 分支文件同步到 Wiki 目录
         cd wiki
         git add .  # 添加所有文件
         git commit -m "Sync all files to Wiki root" || echo "No changes to commit"  # 提交更改
