@@ -1,0 +1,26 @@
+name: Sync All Files to Wiki
+
+on:
+  push:
+    branches:
+      - main  # 只在 main 分支发生 push 时触发
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3  # 检出当前仓库的代码
+
+    - name: Clone Wiki
+      run: |
+        git clone https://github.com/${{ github.repository }}.wiki.git wiki  # 克隆 Wiki 仓库
+
+    - name: Copy all files to Wiki root, excluding unnecessary files
+      run: |
+        rsync -av --exclude='.git/' --exclude='.github/' ./ wiki/  # 将 main 分支文件同步到 Wiki 目录
+        cd wiki
+        git add .  # 添加所有文件
+        git commit -m "Sync all files to Wiki root" || echo "No changes to commit"  # 提交更改
+        git push  # 推送到远程 Wiki 仓库
