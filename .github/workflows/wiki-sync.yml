@@ -3,7 +3,7 @@ name: Sync to Wiki
 on:
   push:
     branches:
-      - main  # 监听 main 分支的推送
+      - master  # 监听 master 分支的推送
     paths-ignore:  # 可选：忽略某些文件/目录的变更（避免循环触发）
       - '.gitignore'
       - '.github/**'
@@ -44,7 +44,8 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add .
+          git status  # 添加这行来查看 git 状态
           if ! git diff --quiet && git diff --staged --quiet; then
             git commit -m "Auto-sync entire repo: ${{ github.sha }}"
-            git push origin HEAD:main
+            git push origin HEAD:master
           fi
