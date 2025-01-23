@@ -37,8 +37,8 @@ jobs:
 
       # 4. 提交并推送更改
       - name: Push to Wiki
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd wiki
           git config user.name "github-actions"
