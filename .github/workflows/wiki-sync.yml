@@ -15,7 +15,7 @@ jobs:
 
     - name: Clone Wiki
       run: |
-        git clone https://github.com/${{ github.repository }}.wiki.git wiki  # 克隆 Wiki 仓库
+        git clone https://github.com/yoliax/llm_note.wiki.git wiki  # 克隆 Wiki 仓库
 
     - name: Copy all files to Wiki root, excluding unnecessary files
       run: |
