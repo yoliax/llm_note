@@ -31,6 +31,7 @@ jobs:
             --exclude='.github/' \
             --exclude='.gitignore' \
             ./ wiki/
+          ls -la wiki  # 添加这行来查看 wiki 目录中的文件
           # 可选：重命名 README.md 为 Wiki 首页
           # mv wiki/README.md wiki/llm_note.md 2>/dev/null || true
 
