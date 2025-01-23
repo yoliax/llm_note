@@ -31,7 +31,7 @@ jobs:
             --exclude='.github/' \
             --exclude='.gitignore' \
             ./ wiki/
-          # 可选：重命名 README.md 为 Wiki 首页
+          # 可选：重命名 README.md 为 Wiki 首页1
           # mv wiki/README.md wiki/Home.md 2>/dev/null || true
 
       # 4. 提交并推送更改
